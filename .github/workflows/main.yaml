@@ -46,7 +46,7 @@ jobs:
         docker build -f Dockerfile -t serverless-py .
         docker tag serverless-py ${{ secrets.CONTAINER_IMAGE_URL }}:latest
         gcloud auth configure-docker ${{ secrets.GCLOUD_REGION }}-docker.pkg.dev
-        docker push ${{ secrets.CONTAINER_IMAGE_URL }} --all-tags
+        docker push ${{ secrets.CONTAINER_IMAGE_URL }} #--all-tags
     - name: Depoy container to Cloud Run
       run:
         gcloud run deploy serverless-py-run --image=${{ secrets.CONTAINER_IMAGE_URL }}:latest --allow-unauthenticated --region=${{ secrets.GCLOUD_REGION }} --project=${{ secrets.GCLOUD_PROJECT_ID }}
