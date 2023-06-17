@@ -43,10 +43,11 @@ jobs:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
     - name: Build container image
       run:
-        docker build -f Dockerfile -t serverless-py .
-        docker tag serverless-py ${{ secrets.CONTAINER_IMAGE_URL }}:latest
+        docker build -f Dockerfile -t inline-docker-tag .
+        docker tag inline-docker-tag ${{ secrets.CONTAINER_IMAGE_URL }}:latest
+        docker tag inline-docker-tag ${{ secrets.CONTAINER_IMAGE_URL }}:${GITHUB_RUN_ID}
         gcloud auth configure-docker ${{ secrets.GCLOUD_REGION }}-docker.pkg.dev
-        docker push ${{ secrets.CONTAINER_IMAGE_URL }} #--all-tags
+        docker push ${{ secrets.CONTAINER_IMAGE_URL }} --all-tags
     - name: Depoy container to Cloud Run
       run:
-        gcloud run deploy serverless-py-run --image=${{ secrets.CONTAINER_IMAGE_URL }}:latest --allow-unauthenticated --region=${{ secrets.GCLOUD_REGION }} --project=${{ secrets.GCLOUD_PROJECT_ID }}
+        gcloud run deploy serverless-py-run --image=${{ secrets.CONTAINER_IMAGE_URL }}:${GITHUB_RUN_ID} --allow-unauthenticated --region=${{ secrets.GCLOUD_REGION }} --project=${{ secrets.GCLOUD_PROJECT_ID }}
